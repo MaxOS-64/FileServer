@@ -29,9 +29,9 @@ using namespace FileServer::filesystem;
 using namespace FileServer::vfs;
 using namespace LibFS;
 
-void mount_ramdisk(mstring endpoint) {
+void mount_ramdisk(mstring endpoint, uint32_t size) {
 
-    klog("mount_ramdisk('%s')\n", endpoint.c_str());
+    klog("mount_ramdisk('%s', %d)\n", endpoint.c_str(), size);
 
     // Try load the initrd
     void* address = open_shared_memory(endpoint.c_str());
@@ -41,7 +41,7 @@ void mount_ramdisk(mstring endpoint) {
     }
 
     // Parse the initrd (@todo verify and shit)
-    auto fs = new TARFileSystem(address);
+    auto fs = new TARFileSystem(address, size);
 
     // Mount
     auto vfs = VirtualFileSystem::current_file_system();

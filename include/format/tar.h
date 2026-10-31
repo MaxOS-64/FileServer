@@ -49,7 +49,7 @@ namespace FileServer::format {
             MaxOS::common::Vector<tar_header_t*> m_headers;
 
         public:
-            TARVolume(uint64_t* start);
+            TARVolume(uint64_t* start, size_t size);
             ~TARVolume();
 
             MaxOS::common::Vector<tar_header_t*> headers();
@@ -100,7 +100,7 @@ namespace FileServer::format {
             TARVolume m_volume;
 
         public:
-            TARFileSystem(void* address);
+            TARFileSystem(void* address, size_t size);
             ~TARFileSystem() final;
     };
 

@@ -15,31 +15,38 @@ using namespace MaxOS;
 using namespace MaxOS::common;
 using namespace MaxOS::KPI;
 
-TARVolume::TARVolume(uint64_t* start)
+TARVolume::TARVolume(uint64_t* start, size_t size)
+: m_start(start),
+  m_size(size)
 {
     uint8_t* address = (uint8_t*)start;
 
     // Cache all the headers
-    for (size_t i = 0; ; i++) {
+    size_t offset = 0;
+    while (m_size - offset >= 512) {
 
         // Get the header
-        auto header = (tar_header_t*)address;
+        auto header = (tar_header_t*)((uint8_t*)m_start + offset);
 
         if (header->filename[0] == '\0')
             break;
+
+        size_t fsize = file_size(header);
+        size_t remaining = m_size - offset - 512;
+        size_t padded_size = ((fsize + 511) / 512) * 512;
+
+        // Ensure the file data fits inside the archive
+        if (padded_size > remaining) {
+            klog("TAR: Invalid entry '%s', exceeds archive bounds\n", header->filename);
+            break;
+        }
 
         // Cache
         m_headers.push_back(header);
         klog("TAR: '%s' size=%d\n", header->filename, (int)file_size(header));
 
         // Move to the starting block for the next header
-        size_t size = file_size(header);
-        address += ((size / 512) + 1) * 512;
-
-        // All blocks are 512 bytes, if the file size is not a multiple of this then it is padded with zeros, skip
-        if (size % 512)
-            address += 512;
-
+        offset += 512 + padded_size;
     }
 
 }
@@ -144,8 +151,8 @@ void TARDirectory::read_from_disk() {
     }
 }
 
-TARFileSystem::TARFileSystem(void* address)
-: m_volume((uint64_t*)address)
+TARFileSystem::TARFileSystem(void* address, size_t size)
+: m_volume((uint64_t*)address, size)
 {
     m_root_directory = new TARDirectory(&m_volume, "/");
     m_root_directory->read_from_disk();

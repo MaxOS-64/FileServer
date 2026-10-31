@@ -50,20 +50,20 @@ void File::flush() {
  */
 void File::seek(SeekType seek_type, size_t offset) {
 
-	// Seek based on the type
-	switch (seek_type) {
-		case SeekType::SET:
-			m_offset = offset;
-			break;
+    // Seek based on the type
+    switch (seek_type) {
+        case SeekType::SET:
+            m_offset = offset;
+            break;
 
-		case SeekType::CURRENT:
-			m_offset += offset;
-			break;
+        case SeekType::CURRENT:
+            m_offset += offset;
+            break;
 
-		case SeekType::END:
-			m_offset = size() - offset;
-			break;
-	}
+        case SeekType::END:
+            m_offset = size() - offset;
+            break;
+    }
 }
 
 /**
@@ -72,7 +72,7 @@ void File::seek(SeekType seek_type, size_t offset) {
  * @return The current position in the file
  */
 uint32_t File::position() const {
-	return m_offset;
+    return m_offset;
 }
 
 /**
@@ -81,7 +81,7 @@ uint32_t File::position() const {
  * @return The name of the file
  */
 string File::name() {
-	return m_name;
+    return m_name;
 }
 
 /**
@@ -90,7 +90,7 @@ string File::name() {
  * @return The size of the file (in bytes)
  */
 size_t File::size() const {
-	return m_size;
+    return m_size;
 }
 
 Directory::Directory() = default;
@@ -100,13 +100,13 @@ Directory::Directory() = default;
  */
 Directory::~Directory() {
 
-	// Free the files
-	for (auto &file: m_files)
-		delete file;
+    // Free the files
+    for (auto& file : m_files)
+        delete file;
 
-	// Free the subdirectories
-	for (auto &subdirectory: m_subdirectories)
-		delete subdirectory;
+    // Free the subdirectories
+    for (auto& subdirectory : m_subdirectories)
+        delete subdirectory;
 
 }
 
@@ -123,7 +123,7 @@ void Directory::read_from_disk() {
  * @return A list of all the files in the directory
  */
 Vector<File*> Directory::files() {
-	return m_files;
+    return m_files;
 }
 
 /**
@@ -132,15 +132,15 @@ Vector<File*> Directory::files() {
  * @param name The name of the file to open
  * @return
  */
-File* Directory::open_file(const string &name) {
+File* Directory::open_file(const string& name) {
 
-	// Try to find the file
-	for (auto &file: m_files)
-		if (file->name() == name)
-			return file;
+    // Try to find the file
+    for (auto& file : m_files)
+        if (file->name() == name)
+            return file;
 
-	// File not found
-	return nullptr;
+    // File not found
+    return nullptr;
 }
 
 /**
@@ -149,8 +149,8 @@ File* Directory::open_file(const string &name) {
  * @param name The name of the file to create
  * @return A new file object or null if it could not be created
  */
-File* Directory::create_file(const string &name) {
-	return nullptr;
+File* Directory::create_file(const string& name) {
+    return nullptr;
 }
 
 /**
@@ -158,7 +158,7 @@ File* Directory::create_file(const string &name) {
  *
  * @param name The name of the file to remove
  */
-void Directory::remove_file(const string &name) {
+void Directory::remove_file(const string& name) {
 }
 
 /**
@@ -167,7 +167,7 @@ void Directory::remove_file(const string &name) {
  * @return The subdirectories in the directory
  */
 Vector<Directory*> Directory::subdirectories() {
-	return m_subdirectories;
+    return m_subdirectories;
 }
 
 /**
@@ -176,17 +176,17 @@ Vector<Directory*> Directory::subdirectories() {
  * @param name The name of the directory to open
  * @return The directory object or null if it could not be opened
  */
-Directory* Directory::open_subdirectory(const string &name) {
+Directory* Directory::open_subdirectory(const string& name) {
 
-	// Try to find the directory
-	for (auto &subdirectory: m_subdirectories)
-		if (subdirectory->name() == name) {
-			subdirectory->read_from_disk();
-			return subdirectory;
-		}
+    // Try to find the directory
+    for (auto& subdirectory : m_subdirectories)
+        if (subdirectory->name() == name) {
+            subdirectory->read_from_disk();
+            return subdirectory;
+        }
 
-	// Directory not found
-	return nullptr;
+    // Directory not found
+    return nullptr;
 }
 
 /**
@@ -195,15 +195,15 @@ Directory* Directory::open_subdirectory(const string &name) {
  * @param name The name of the directory to create
  * @return The new directory object or null if it could not be created
  */
-Directory* Directory::create_subdirectory(const string &name) {
-	return nullptr;
+Directory* Directory::create_subdirectory(const string& name) {
+    return nullptr;
 }
 
 /**
  * @brief Try to remove a directory in the directory
  * @param name The name of the directory to remove
  */
-void Directory::remove_subdirectory(const string &name) {
+void Directory::remove_subdirectory(const string& name) {
 }
 
 
@@ -213,7 +213,7 @@ void Directory::remove_subdirectory(const string &name) {
  * @return The name of the directory
  */
 string Directory::name() {
-	return m_name;
+    return m_name;
 }
 
 /**
@@ -223,61 +223,63 @@ string Directory::name() {
  */
 size_t Directory::size() {
 
-	// Sum the size of all the files
-	size_t size = 0;
-	for (auto &file: m_files)
-		size += file->size();
+    // Sum the size of all the files
+    size_t size = 0;
+    for (auto& file : m_files)
+        size += file->size();
 
-	return size;
+    return size;
 
 }
 
 void Directory::debug_contents(uint64_t max_depth) {
 
-	struct StackEntry {
-		Directory* dir;
-		uint64_t depth;
-	};
+    struct StackEntry {
+        Directory* dir;
+        uint64_t depth;
+    };
 
-	// Small stack container (uses your kernel Vector)
-	Vector<StackEntry> stack;
-	stack.push_back({ this, 0 });
+    // Small stack container (uses your kernel Vector)
+    Vector<StackEntry> stack;
+    stack.push_back({this, 0});
 
-	while (!stack.empty()) {
-		StackEntry entry = stack.pop_back();
+    while (!stack.empty()) {
+        StackEntry entry = stack.pop_back();
 
-		Directory* cur = entry.dir;
-		uint64_t cur_depth = entry.depth;
-		if (!cur) continue;
+        Directory* cur = entry.dir;
+        uint64_t cur_depth = entry.depth;
+        if (!cur)
+            continue;
 
-		// Build indent string (two spaces per depth)
-		string indent;
-		for (uint64_t i = 0; i < cur_depth; ++i)
-			indent += "  ";
+        // Build indent string (two spaces per depth)
+        string indent;
+        for (uint64_t i = 0; i < cur_depth; ++i)
+            indent += "  ";
 
-		// Print directory header
-		KPI::klog("%s[DIR ] %s\n", indent.c_str(), cur->name().c_str());
+        // Print directory header
+        KPI::klog("%s[DIR ] %s\n", indent.c_str(), cur->name().c_str());
 
-		// Print files in the directory (non-recursive)
-		for (auto *f : cur->m_files) {
-			if (!f) continue;
-			KPI::klog("%s  [FILE] %s\n", indent.c_str(), f->name().c_str());
-		}
+        // Print files in the directory (non-recursive)
+        for (auto* f : cur->m_files) {
+            if (!f)
+                continue;
+            KPI::klog("%s  [FILE] %s\n", indent.c_str(), f->name().c_str());
+        }
 
-		// Depth limit check: if we've reached max_depth, do not push children
-		if (max_depth != (uint64_t)-1 && cur_depth >= max_depth)
-			continue;
+        // Depth limit check: if we've reached max_depth, do not push children
+        if (max_depth != (uint64_t)-1 && cur_depth >= max_depth)
+            continue;
 
-		// Push subdirectories onto the stack.
-		// Push in reverse order so the output order matches the natural forward order.
-		size_t sub_count = cur->m_subdirectories.size();
-		for (size_t i = sub_count; i-- > 0; )
-		{
-			Directory* sd = cur->m_subdirectories[i];
-			if (!sd) continue;
-			stack.push_back({ sd, cur_depth + 1 });
-		}
-	}
+        // Push subdirectories onto the stack.
+        // Push in reverse order so the output order matches the natural forward order.
+        size_t sub_count = cur->m_subdirectories.size();
+        for (size_t i = sub_count; i-- > 0;) {
+            Directory* sd = cur->m_subdirectories[i];
+            if (!sd)
+                continue;
+            stack.push_back({sd, cur_depth + 1});
+        }
+    }
 
 }
 
@@ -287,9 +289,9 @@ void Directory::debug_contents(uint64_t max_depth) {
  * @param file The file to rename
  * @param new_name The new name of the file
  */
-void Directory::rename_file(File* file, string const &new_name) {
+void Directory::rename_file(File* file, string const& new_name) {
 
-	rename_file(file->name(), new_name);
+    rename_file(file->name(), new_name);
 
 }
 
@@ -299,9 +301,9 @@ void Directory::rename_file(File* file, string const &new_name) {
  * @param old_name The file to rename
  * @param new_name The new name of the file
  */
-void Directory::rename_file(string const &old_name, string const &new_name) {
+void Directory::rename_file(string const& old_name, string const& new_name) {
 
-	ASSERT(false, "not implemented");
+    ASSERT(false, "not implemented");
 
 }
 
@@ -311,9 +313,9 @@ void Directory::rename_file(string const &old_name, string const &new_name) {
  * @param directory The directory to rename
  * @param new_name The new name of the directory
  */
-void Directory::rename_subdirectory(Directory* directory, string const &new_name) {
+void Directory::rename_subdirectory(Directory* directory, string const& new_name) {
 
-	rename_subdirectory(directory->name(), new_name);
+    rename_subdirectory(directory->name(), new_name);
 
 }
 
@@ -323,8 +325,8 @@ void Directory::rename_subdirectory(Directory* directory, string const &new_name
  * @param old_name The directory to rename
  * @param new_name The new name of the directory
  */
-void Directory::rename_subdirectory(string const &old_name, string const &new_name) {
-	ASSERT(false, "not implemented");
+void Directory::rename_subdirectory(string const& old_name, string const& new_name) {
+    ASSERT(false, "not implemented");
 }
 
 FileSystem::FileSystem() = default;
@@ -334,8 +336,8 @@ FileSystem::FileSystem() = default;
  */
 FileSystem::~FileSystem() {
 
-	// Free the root directory
-	delete m_root_directory;
+    // Free the root directory
+    delete m_root_directory;
 
 }
 
@@ -345,7 +347,7 @@ FileSystem::~FileSystem() {
  * @return The root directory of the filesystem
  */
 Directory* FileSystem::root_directory() {
-	return m_root_directory;
+    return m_root_directory;
 }
 
 /**
@@ -354,33 +356,33 @@ Directory* FileSystem::root_directory() {
  * @param path The path to the directory
  * @return The directory object or null if it could not be opened
  */
-Directory* FileSystem::get_directory(const string &path) {
+Directory* FileSystem::get_directory(const string& path) {
 
-	// Check if the path is the root
-	if (path == "/")
-		return root_directory();
+    // Check if the path is the root
+    if (path == "/")
+        return root_directory();
 
-	// Recursively open the directory
-	Directory* directory = root_directory();
-	string directory_path = path;
-	while (directory_path.length() > 0) {
+    // Recursively open the directory
+    Directory* directory = root_directory();
+    string directory_path = (path.length() > 1 && path[0] == '/') ? path.substring(1, path.length() - 1) : path;
+    while (directory_path.length() > 0) {
 
-		// Get the name of the directory
-		string directory_name = Path::top_directory(directory_path);
+        // Get the name of the directory
+        string directory_name = Path::top_directory(directory_path);
 
-		// Open the directory
-		Directory* subdirectory = directory->open_subdirectory(directory_name);
-		if (!subdirectory)
-			return nullptr;
+        // Open the directory
+        Directory* subdirectory = directory->open_subdirectory(directory_name);
+        if (!subdirectory)
+            return nullptr;
 
-		// Set the new directory
-		directory = subdirectory;
+        // Set the new directory
+        directory = subdirectory;
 
-		// Get the path to the next directory
-		directory_path = directory_path.substring(directory_name.length() + 1, directory_path.length() - directory_name.length() - 1);
-	}
+        // Get the path to the next directory
+        directory_path = directory_path.substring(directory_name.length() + 1, directory_path.length() - directory_name.length() - 1);
+    }
 
-	return directory;
+    return directory;
 }
 
 /**
@@ -389,17 +391,17 @@ Directory* FileSystem::get_directory(const string &path) {
  * @param path The path to check
  * @return True if the path exists, false otherwise
  */
-bool FileSystem::exists(const string &path) {
+bool FileSystem::exists(const string& path) {
 
-	// Get the directory at the path
-	string directory_path = Path::file_path(path);
-	Directory* directory = get_directory(directory_path);
+    // Get the directory at the path
+    string directory_path = Path::file_path(path);
+    Directory* directory = get_directory(directory_path);
 
-	// Check if the directory exists
-	if (!directory)
-		return false;
+    // Check if the directory exists
+    if (!directory)
+        return false;
 
-	// Check if the file exists
-	const string file_name = Path::file_name(path);
-	return directory->open_file(file_name) != nullptr;
+    // Check if the file exists
+    const string file_name = Path::file_name(path);
+    return directory->open_file(file_name) != nullptr;
 }
