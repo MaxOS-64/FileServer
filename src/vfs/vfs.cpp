@@ -188,6 +188,7 @@ FileSystem* VirtualFileSystem::find_filesystem(string path) {
 
 	// Search through the filesystems
 	for (const auto& filesystem : filesystems) {
+
 		// Get the filesystem and mount point
 		FileSystem* fs = filesystem.first;
 		string mount_point = filesystem.second;
@@ -199,7 +200,7 @@ FileSystem* VirtualFileSystem::find_filesystem(string path) {
 		}
 	}
 
-	return longest_match_fs;
+    return longest_match_fs;
 }
 
 /**
@@ -277,7 +278,6 @@ Directory* VirtualFileSystem::open_directory(Directory* parent, string const& na
 	if (!opened_directory)
 		return nullptr;
 
-	opened_directory->read_from_disk();
 	return opened_directory;
 }
 
