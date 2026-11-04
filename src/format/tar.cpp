@@ -122,7 +122,7 @@ void TARDirectory::read_from_disk() {
     Map<string, bool> seen_dirs;
 
     for (const auto& header : m_volume->headers()) {
-        const string& path = "/"s + header->filename;
+        const string& path = "/"_s+ header->filename;
 
         // Only care about storing files in this directory
         if (!Path::is_child_of(path, this_path))
